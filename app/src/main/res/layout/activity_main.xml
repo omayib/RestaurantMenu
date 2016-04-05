@@ -17,7 +17,8 @@
         android:id="@+id/editTextEmail"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="email" />
+        android:hint="email"
+        android:text="coba@email.com" />
 
     <EditText
         android:layout_width="match_parent"
@@ -28,7 +29,8 @@
         android:layout_below="@+id/editTextEmail"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:hint="password" />
+        android:hint="password"
+        android:text="123yes" />
 
     <Button
         android:layout_width="match_parent"

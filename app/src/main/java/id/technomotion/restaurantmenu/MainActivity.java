@@ -1,10 +1,15 @@
 package id.technomotion.restaurantmenu;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -27,7 +32,19 @@ public class MainActivity extends AppCompatActivity {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                RestaurantClient.Foods().enqueue(new Callback() {
+                String inputEmail=editTextEmail.getText().toString();
+                String inputPassword=editTextPwd.getText().toString();
+
+                if(inputEmail.isEmpty()){
+                    Toast.makeText(MainActivity.this,"email wajib diisi",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(inputPassword.isEmpty()){
+                    Toast.makeText(MainActivity.this,"password wajib diisi",Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                RestaurantClient.Signin(inputEmail,inputPassword).enqueue(new Callback() {
                     @Override
                     public void onFailure(Call call, IOException e) {
                         e.printStackTrace();
@@ -35,7 +52,22 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(Call call, Response response) throws IOException {
-                        System.out.println(response.body().string());
+                        String jsonString = response.body().string();
+                        boolean isSigninSucceeded = false;
+                        String token="";
+                        try {
+                            JSONObject jsonObject=new JSONObject(jsonString);
+                            isSigninSucceeded=jsonObject.getBoolean("succeeded");
+                            token=jsonObject.getString("token");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        if(isSigninSucceeded){
+                            Intent intent=new Intent(MainActivity.this,FoodsActivity.class);
+                            intent.putExtra("data_token",token);
+                            startActivity(intent);
+                            finish();
+                        }
                     }
                 });
             }
